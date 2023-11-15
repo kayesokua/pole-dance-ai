@@ -37,20 +37,26 @@ def extract_static_pose(
   return landmarks, annotated_image
 
 def annotate_pose(landmarks: list[mp.solutions.pose.PoseLandmark], rgb_image: np.ndarray) -> np.ndarray:
-  annotated_image = rgb_image.copy()
-  i = 0
-  for landmark in landmarks:
-    if i <= 10:
-      # marks blue
-      cv2.circle(annotated_image, (int(landmark.x * rgb_image.shape[1]), int(landmark.y * rgb_image.shape[0])), 5, (255, 215, 0), -1)
-    elif i <= 22 and i > 10:
-      # marks green
-      cv2.circle(annotated_image, (int(landmark.x * rgb_image.shape[1]), int(landmark.y * rgb_image.shape[0])), 5, (244, 164, 96), -1)
-    else:
-      # marks red
-      cv2.circle(annotated_image, (int(landmark.x * rgb_image.shape[1]), int(landmark.y * rgb_image.shape[0])), 5, (205, 92, 92), -1)
-    i += 1
-  return annotated_image
+    annotated_image = rgb_image.copy()
+    i = 0
+    for landmark in landmarks:
+        # Convert landmark coordinates to pixel values
+        landmark_px = (int(landmark.x * rgb_image.shape[1]), int(landmark.y * rgb_image.shape[0]))
+        
+        if i < 11:
+            # marks red for head
+            cv2.circle(annotated_image, landmark_px, 5, (0, 0, 255), -1)
+        elif 10 < i < 23:
+            # marks green for mid body
+            cv2.circle(annotated_image, landmark_px, 5, (0, 255, 0), -1)
+        elif 22 < i < 29:
+            # marks blue for lower body
+            cv2.circle(annotated_image, landmark_px, 5, (255, 0, 0), -1)
+        elif 28 < i < 33:
+            # marks magenta for feet
+            cv2.circle(annotated_image, landmark_px, 5, (255, 0, 255), -1)
+        i += 1
+    return annotated_image
 
 def download_landmarks_csv(landmarks: list[mp.solutions.pose.PoseLandmark], image_url_path: str, output_dir: str) -> bool:
   try:

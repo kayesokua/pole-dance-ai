@@ -1,9 +1,11 @@
 import os
 import csv
+import cv2
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+
 
 def load_pose_landmarks_from_csv(csv_file):
     landmarks = []
@@ -29,6 +31,53 @@ def plot_pose_landmarks(landmarks):
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title('Pose Landmarks')
+    plt.show()
+
+def plot_pose_xyzv_values(csv_path: str, image_path: str):
+    plot_title = os.path.basename(csv_path).split('.')[0]    
+    df = pd.read_csv(csv_path)
+    orig_img = cv2.imread(image_path)
+
+    x = df['x'].to_numpy()
+    y = df['y'].to_numpy()
+    z = df['z'].to_numpy()
+    v = df['v'].to_numpy()
+
+    fig, axes = plt.subplots(1, 4, figsize=(20, 5))
+
+    axes[0].set_title(plot_title)
+    axes[0].imshow(orig_img)
+    axes[0].axis('off')
+
+    axes[1].set_title("Pose X,Y")
+    axes[1].scatter(x[0:10], y[0:10], color=mcolors.CSS4_COLORS['red'], label="head")
+    axes[1].scatter(x[11:22], y[11:22], color=mcolors.CSS4_COLORS['green'], label="upper body")
+    axes[1].plot(x[23:28], y[23:28], color=mcolors.CSS4_COLORS['blue'], label="lower body", marker='P', linestyle='None')
+    axes[1].plot(x[29:32], y[29:32], color=mcolors.CSS4_COLORS['magenta'], label="feet", marker='P', linestyle='None')
+    axes[1].set_xlabel("x-axis")
+    axes[1].set_ylabel("y-axis")
+    axes[1].set_xlim(0, 1)
+    axes[1].set_ylim(0, 1)
+    axes[1].invert_yaxis()
+    axes[1].grid()
+
+    # Pose Z Plot
+    axes[2].set_title("Pose Z")
+    axes[2].plot(z, color=mcolors.CSS4_COLORS['cornflowerblue'], label="z-axis")
+    axes[2].set_xlabel("Pose Landmarks")
+    axes[2].set_ylabel("z-axis")
+    axes[2].set_ylim(min(z), max(z))
+    axes[2].grid()
+
+    # Visibility Plot
+    axes[3].set_title("Visibility")
+    axes[3].plot(v, color=mcolors.CSS4_COLORS['mediumpurple'], label="visibility")
+    axes[3].set_xlabel("Pose Landmarks")
+    axes[3].set_ylabel("visibility")
+    axes[3].set_ylim(0, 1.5)
+    axes[3].grid()
+
+    fig.tight_layout()
     plt.show()
 
 def batch_plot_pose_landmarks(directory, keyword):
@@ -59,9 +108,7 @@ def batch_plot_pose_landmarks(directory, keyword):
         ax.set_title(file[:-4])
         ax.plot(x[0:10], y[0:10], color=mcolors.CSS4_COLORS['red'], label="head", marker='P', linestyle='None')
         ax.plot(x[11:22], y[11:22], color=mcolors.CSS4_COLORS['green'], label="mid body", marker='P', linestyle='None')
-
         ax.plot(x[23:28], y[23:28], color=mcolors.CSS4_COLORS['blue'], label="lower body", marker='P', linestyle='None')
-        
         ax.plot(x[29:32], y[29:32], color=mcolors.CSS4_COLORS['magenta'], label="feet", marker='P', linestyle='None')
         
         ax.set_xlabel("x-axis")
