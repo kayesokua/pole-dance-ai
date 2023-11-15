@@ -9,3 +9,7 @@ drafted.ipynb
 *.pdf
 *.docx
 docs/resources/*
+*.mp4
+*.mov
+*.npy
+draft.ipynb

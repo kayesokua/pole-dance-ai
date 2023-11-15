@@ -41,3 +41,36 @@ def batch_image_resampling(input_dir, output_dir, resampling_rate):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
     return False
+
+def rename_images(directory, prepend_str):
+    for filename in os.listdir(directory):
+        if filename.endswith(".csv"):  # Check if the file is a PNG image
+            new_filename = prepend_str + filename
+            original_filepath = os.path.join(directory, filename)
+            new_filepath = os.path.join(directory, new_filename)
+            os.rename(original_filepath, new_filepath)
+            print(f"Renamed '{filename}' to '{new_filename}'")
+
+# Example usage:
+# rename_images('data/processed/source-ik/beginner', 'beginner-')
+
+def validate_images_and_labels(source_directory, source_masterlist):
+    labels = source_masterlist['filename'].tolist()
+    images = []
+    no_match = []
+    
+    for image in os.listdir(source_directory):
+        if image.endswith('.png'):
+            filename = os.path.basename(image)
+            images.append(os.path.splitext(filename)[0])
+        
+    for label in labels:
+        if label not in images:
+            print(label, " has no matching image")
+            no_match.append(label)
+
+    if len(no_match) == 0:
+        print(f'All images and labels matched for {len(images)} items')
+        return True
+    else:
+        return sorted(no_match)
