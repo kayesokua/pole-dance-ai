@@ -160,14 +160,11 @@ def batch_plot_pose_landmarks_agg(directory, keyword):
         
         ax.set_title(file[:-4])
         ax.plot(head_x, head_y, color=mcolors.CSS4_COLORS['red'], label="head", marker='P')
-        
         ax.plot(torso_x, torso_y, color=mcolors.CSS4_COLORS['green'], label="upper body", marker='P')
-        
         ax.plot(handR_x, handR_y, color=mcolors.CSS4_COLORS['blue'], label="upper body", marker='<')
         ax.plot(handL_x, handL_y, color=mcolors.CSS4_COLORS['blue'], label="upper body", marker='>')
         ax.plot(df['x'].iloc[[12, 14, 16]], df['y'].iloc[[12, 14, 16]], color=mcolors.CSS4_COLORS['blue'], label="right arm", marker='_')
         ax.plot(df['x'].iloc[[11, 13, 15]], df['y'].iloc[[11, 13, 15]], color=mcolors.CSS4_COLORS['blue'], label="left arm", marker='_')
-        
         ax.plot(footR_x, footR_y, color=mcolors.CSS4_COLORS['violet'], label="lower body", marker='<')
         ax.plot(footL_x, footL_y, color=mcolors.CSS4_COLORS['violet'], label="lower body", marker='>')
         ax.plot(df['x'].iloc[[24, 26, 28]], df['y'].iloc[[24, 26, 28]], color=mcolors.CSS4_COLORS['magenta'], label="right legs", marker='_')

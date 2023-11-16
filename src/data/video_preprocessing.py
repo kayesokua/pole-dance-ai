@@ -1,6 +1,9 @@
+import os
 import cv2
 import mediapipe as mp
 import time
+import pandas as pd
+import numpy as np
 
 def measure_elapsed_time(function):
     def wrapper(*args, **kwargs):
@@ -24,11 +27,11 @@ mp_drawing_styles = mp.solutions.drawing_styles
 def extract_landmarks_from_videos(input_dir: str):
     with mp_pose.Pose(
             min_detection_confidence=0.5,
-            min_tracking_confidence=0.5) as pose:
+            min_tracking_confidence=0.5, model_complexity=2) as pose:
         all_data = []
         for i, filename in enumerate(os.listdir(input_dir)):
             if filename.endswith(".mp4"):
-                output_dir = f"../../data/interim/{filename[:-4]}/"
+                output_dir = f"data/interim/{filename[:-4]}/"
                 output_csv = output_dir + "landmarks_rel.csv"
                 output_frames = output_dir + "frames/"
                 create_output_dir_if_not_exists(output_dir)
@@ -58,6 +61,7 @@ def extract_landmarks_from_videos(input_dir: str):
                                 pose_data[f'{position}_x'] = landmark.x
                                 pose_data[f'{position}_y'] = landmark.y
                                 pose_data[f'{position}_z'] = landmark.z
+                                pose_data[f'{position}_v'] = landmark.visibility
                         pose_frame_count += 1  # increment the new counter
                     else:
                         missing_pose_count += 1
